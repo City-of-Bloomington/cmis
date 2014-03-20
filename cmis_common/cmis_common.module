@@ -1,8 +1,7 @@
-<?php 
-
+<?php
 /**
  * Implementation of hook_cmis_info()
- * 
+ *
  */
 function cmis_common_cmis_info() {
   return array(
@@ -16,19 +15,19 @@ function cmis_common_cmis_info() {
 
 /**
  * Implementation of hook_menu().
- * 
+ *
  */
 function cmis_common_menu() {
   $items = array();
-  
+
   $items['admin/settings/cmis/common'] = array(
     'type' => MENU_CALLBACK,
     'title' => t('CMIS Library checker'),
-    'page callback' => 'cmis_common_lib_check', 
+    'page callback' => 'cmis_common_lib_check',
     'access callback' => 'user_access',
     'access arguments' => array('access cmis'),
-  );  
-    
+  );
+
   return $items;
 }
 
@@ -46,18 +45,18 @@ function cmis_common_lib_check() {
   }
 }
 
-/** 
- * Short-circuit the version argument. 
- */ 
-function short_circuit_version() { 
-  return TRUE; 
-} 
+/**
+ * Short-circuit the version argument.
+ */
+function short_circuit_version() {
+  return TRUE;
+}
 
 /**
  * Implements hook_libraries_info().
  */
 function cmis_common_libraries_info() {
-  $libraries = array(); 
+  $libraries = array();
   $libraries['cmis-phplib'] = array(
     'name' => 'CMIS Library',
     'vendor url' => 'http://chemistry.apache.org/php/phpclient.html',
@@ -74,7 +73,7 @@ function cmis_common_libraries_info() {
 
 /**
  * Implementation of hook_cmisapi_invoke().
- * 
+ *
  */
 function cmis_common_cmisapi_invoke() {
   $args = func_get_args();
@@ -85,16 +84,16 @@ function cmis_common_cmisapi_invoke() {
   unset($args[1]);
 
   $cmis_repository = cmis_get_repository($repository_id);
-  
-  // pass repository info from cache 
+
+  // pass repository info from cache
   if ($cmis_method == 'getRepositoryInfo' && isset($cmis_repository->info)) {
     return $cmis_repository->info;
   }
-  
+
   // cache service instance
   if (!isset($cmis_repository->service)) {
     module_load_include('utils.inc', 'cmis_common');
-    
+
     // CommonCMISService allows other modules to control the way CMISService class
     // calls the CMIS repositories via hook_cmis_invoke()
 
@@ -102,7 +101,7 @@ function cmis_common_cmisapi_invoke() {
                                                       isset($cmis_repository->settings['user']),
                                                       isset($cmis_repository->settings['password']));
   }
-  
+
   return call_user_func_array(array($cmis_repository->service, $cmis_method), $args);
 }
 
@@ -120,41 +119,41 @@ function cmis_common_cmis_invoke($url, $properties, $settings, $dry_run = FALSE)
   }
 
   curl_setopt($session, CURLOPT_CUSTOMREQUEST, $properties['method']);
-  
+
   if ($properties['headers']) {
     $headers = array();
     foreach($properties['headers'] as $header_name => $header_value) {
       $headers[] = $header_name .': '. $header_value;
-    }    
+    }
     curl_setopt($session, CURLOPT_HTTPHEADER, $headers);
   }
   if ($properties['data']) {
     curl_setopt($session, CURLOPT_POSTFIELDS, $properties['data']);
   }
-  
+
   if ($properties['method'] == "POST") {
     curl_setopt($session, CURLOPT_POST, true);
   }
-  
+
   $retval = new stdClass();
   $retval->url = $url;
   $retval->method = $properties['method'];
   $retval->content_sent = $properties['data'];
   $retval->content_type_sent = $properties['headers']['Content-Type'];
-  
+
   if (!$dry_run) {
     $retval->body = curl_exec($session);
     $retval->code = curl_getinfo($session, CURLINFO_HTTP_CODE);
     $retval->content_type = curl_getinfo($session, CURLINFO_CONTENT_TYPE);
     $retval->content_length = curl_getinfo($session, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
     curl_close($session);
-    
+
     if (!in_array($retval->code, array(200,201,204))) {
       throw new CMISException(t("HTTP call to [@url] returned [@code]. Response: @response", array(
         '@code' => $retval->code,
         '@response' => strip_tags($retval->body),
         '@url' => $url
-      )));      
+      )));
     }
   }
   else {
