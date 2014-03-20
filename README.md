@@ -56,23 +56,29 @@ $conf['cmis_repositories'] = array(
 
 
 Settings:
-  * user - Generic username used by cmis_common to authenticate Drupal to the CMIS repository
-         - optional, used by cmis_common
-  * password - Generic password used by cmis_common to authenticate Drupal to the CMIS repository
-             - optional, used by cmis_common
-  * url - CMIS repository endpoint url
-        - mandatory, used by cmis_common
-  * label - repository label
-          - optional, used by cmis_browser's CMIS repository switcher block, useful if connecting to multiple repositories
-  * browser_default_folderId, browser_default_folderPath
-      - default CMIS folder displayed by cmis_browser module
-      - optional, defaults to `repositoryInfo['cmis:rootFolderId']`, used by cmis_browser
-  * transport - Drupal's module that implements hook_cmis_invoke($url, $properties, $settings) hook, where :
-                      - $url - CMIS absolute REST url
-                      - $properties - request properties
-                      - $settings - CMIS repositories settings comming from $conf['cmis_repositories']
-              - optional, defaults to `cmis_common` used by cmis module
-	      - See cmis_headerswing section below for more information
+* user
+    - Generic username used by cmis_common to authenticate Drupal to the CMIS repository
+    - optional, used by cmis_common
+* password
+    - Generic password used by cmis_common to authenticate Drupal to the CMIS repository
+    - optional, used by cmis_common
+* url
+    - CMIS repository endpoint url
+    - mandatory, used by cmis_common
+* label
+    - repository label
+    - optional, used by cmis_browser's CMIS repository switcher block, useful if connecting to multiple repositories
+* browser_default_folderId, browser_default_folderPath
+    - default CMIS folder displayed by cmis_browser module
+    - optional, defaults to `repositoryInfo['cmis:rootFolderId']`, used by cmis_browser
+* transport
+    - Drupal's module that implements hook_cmis_invoke($url, $properties, $settings) hook, where :
+		- $url - CMIS absolute REST url
+		- $properties - request properties
+		- $settings
+		    - CMIS repositories settings comming from $conf['cmis_repositories']
+			- optional, defaults to `cmis_common` used by cmis module
+		- See cmis_headerswing section below for more information
 
 
 To browse the CMIS repository go to http://localhost/cmis/browser.
