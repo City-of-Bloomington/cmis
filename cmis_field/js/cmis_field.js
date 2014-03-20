@@ -14,7 +14,7 @@
           if (rootDir) { browserUrl += rootDir; }
 
           //TODO: Make this a modal, not a popup (will be much harder to manage context when clicking around the cmis browser)
-          window.open(browserUrl + '?type=popup&caller=' + caller, 'cmisBrowser', 'width=800,height=500,resizable');
+          window.open(browserUrl + '?type=popup&caller=' + caller, 'cmisBrowser', 'width=800,height=500,resizable=yes,scrollbars=yes');
           return false;
       });
 
