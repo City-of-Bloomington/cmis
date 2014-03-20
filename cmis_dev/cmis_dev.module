@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Implementation of hook_menu()
  */
@@ -15,7 +14,7 @@ function cmis_dev_menu() {
 }
 
 /**
- * Return CMIS Repository Information such as repo name, repo description, 
+ * Return CMIS Repository Information such as repo name, repo description,
  * vendor name, product name and product version.
  */
 function cmis_dev_info() {
@@ -28,12 +27,12 @@ function cmis_dev_info() {
     cmis_error_handler('cmis_dev', $e);
     return '';
   }
-    
-  
+
+
   $rows = array();
   foreach($repository->info->repositoryInfo as $property_name => $property) {
     $rows[] = array(t($property_name), $property);
   }
-  
+
   return theme('table', array('header' => array(t('Name'), t('Properties')), 'rows' => $rows));
 }

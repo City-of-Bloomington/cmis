@@ -1,20 +1,19 @@
-<?php 
-
+<?php
 /**
  * Build cmis_browser browse page.
- * 
+ *
  */
 function cmis_browser_content_get() {
   module_load_include('api.inc', 'cmis');
   module_load_include('utils.inc', 'cmis_browser');
-  
+
   // Invoke CMIS service
   try {
-    $repository = cmis_get_repository();    
+    $repository = cmis_get_repository();
     $object = _cmis_browser_content_object_from_request($repository);
-    
+
     switch ($object->properties['cmis:baseTypeId']) {
-      case 'cmis:document': 
+      case 'cmis:document':
         return _cmis_browser_content_get_document($repository, $object);
         break;
       case 'cmis:folder':
@@ -30,16 +29,16 @@ function cmis_browser_content_get() {
   catch (CMISException $e) {
     cmis_error_handler('cmis_browser', $e);
     return '';
-  }  
+  }
 }
 
 /**
  * CMIS document download handler.
- *  
+ *
  */
 function _cmis_browser_content_get_document($repository, $object) {
   module_load_include('api.inc', 'cmis');
-  
+
   try {
     $content = cmisapi_getContentStream($repository->repositoryId, $object->id);
   }
@@ -48,7 +47,7 @@ function _cmis_browser_content_get_document($repository, $object) {
     drupal_add_http_header('', 'HTTP/1.1 503 Service unavailable');
     exit();
   }
-  
+
   if (ob_get_level()) {
     ob_end_clean();
   }
@@ -56,10 +55,10 @@ function _cmis_browser_content_get_document($repository, $object) {
   drupal_add_http_header('Cache-Control', 'no-cache, must-revalidate');
   drupal_add_http_header('Content-type', $object->properties['cmis:contentStreamMimeType']);
   if ($object->properties['cmis:contentStreamMimeType'] != 'text/html') {
-    drupal_add_http_header('Content-Disposition', 'attachment; filename="'. $object->properties['cmis:name'] .'"');  
+    drupal_add_http_header('Content-Disposition', 'attachment; filename="'. $object->properties['cmis:name'] .'"');
   }
-  
-   
+
+
   print($content);
 
   exit();
@@ -67,7 +66,7 @@ function _cmis_browser_content_get_document($repository, $object) {
 
 /**
  * CMIS folder browser handler.
- *  
+ *
  */
 function _cmis_browser_content_get_folder($repository, $object) {
   try {

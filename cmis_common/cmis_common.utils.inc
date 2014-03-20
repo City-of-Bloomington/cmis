@@ -13,7 +13,7 @@ class CommonCMISService extends CMISService {
       'data' => $content,
       'headers' => array('Content-Type' => $contentType .(!is_null($charset)?'; charset='. $charset:'')),
     ));
-    
+
     $retval = new stdClass();
     $retval->url = $url;
     $retval->method = $method;
@@ -23,9 +23,9 @@ class CommonCMISService extends CMISService {
     $retval->code = $result->code;
     $retval->content_type = $result->content_type;
     $retval->content_length = $result->content_length;
-    
+
     $this->last_request = $retval;
-    
+
     return $retval;
   }
 }

@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 /**
  * Cmis folder picker autocomplete callback.
  *
@@ -11,11 +10,11 @@ function cmis_browser_autocomplete() {
   $path = '/'. implode('/', array_slice($args, 0, sizeof($args) - 1));
   $key = end($args);
   $matches = array();
-  
+
   try {
     $repository = cmis_get_repository();
     $folder_object = cmisapi_getObjectByPath($repository->repositoryId, drupal_encode_path($path));
-    
+
     $matches = array();
     foreach (array('cmis:folder', 'cmis:document') as $cmis_base_type) {
       try {
@@ -28,7 +27,7 @@ function cmis_browser_autocomplete() {
         cmis_error_handler('cmis_path_autocomplete', $e);
         continue;
       }
-      
+
       foreach ($cmis_objects->objectList as $cmis_object) {
         $matched_base_object = $cmis_base_type == 'cmis:folder'?$cmis_object:$folder_object;
         $matches[$matched_base_object->properties['cmis:path'] .'/'] = $cmis_object->properties['cmis:name'];
@@ -44,10 +43,10 @@ function cmis_browser_autocomplete() {
 
 /**
  * TreeView callback for cmis_browser
- * 
+ *
  */
 function cmis_browser_tree() {
-  module_load_include('api.inc', 'cmis');  
+  module_load_include('api.inc', 'cmis');
 
   $root = $_REQUEST['id'];
 
@@ -59,14 +58,14 @@ function cmis_browser_tree() {
     else {
       $object = cmisapi_getObjectByPath($repository->repositoryId, drupal_encode_path($root));
     }
-    
+
     $children = cmisapi_getChildren($repository->repositoryId, $object->id);
   }
   catch (CMISException $e) {
     cmis_error_handler('cmis_browser', $e);
     return '';
-  }  
-  
+  }
+
   $result = array();
   foreach ($children->objectList as $child) {
     $result[] = array(
@@ -78,6 +77,6 @@ function cmis_browser_tree() {
       )
     );
   }
-  
+
   drupal_json_output($result);
 }

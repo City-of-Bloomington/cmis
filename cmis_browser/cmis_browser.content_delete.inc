@@ -1,24 +1,23 @@
-<?php 
-
+<?php
 /**
  * Menu callback -- ask for confirmation of CMIS object deletion
- * 
+ *
  */
 function cmis_browser_content_delete_confirm($form, &$form_state) {
   module_load_include('api.inc', 'cmis');
-  
+
   $cmis_objectId = urldecode($_GET['id']);
   $form['cmis_objectId'] = array('#type' => 'value', '#value' => $cmis_objectId);
   $form['return_url'] = array('#type' => 'value', '#value' => $_GET['return_url']);
 
   try {
     $repository = cmis_get_repository();
-    $cmis_object = cmisapi_getProperties($repository->repositoryId, $cmis_objectId);  
+    $cmis_object = cmisapi_getProperties($repository->repositoryId, $cmis_objectId);
   }
   catch (CMISException $e) {
     cmis_error_handler('cmis_content_delete', $e);
   }
-  
+
   return confirm_form($form,
     t('Are you sure you want to delete %name?', array('%name' => $cmis_object->properties['cmis:name'])),
     $_GET['return_url'],
@@ -30,11 +29,11 @@ function cmis_browser_content_delete_confirm($form, &$form_state) {
 
 /**
  * Execute CMIS object deletion.
- * 
+ *
  */
 function cmis_browser_content_delete_confirm_submit($form, &$form_state) {
   module_load_include('api.inc', 'cmis');
-  
+
   if ($form_state['values']['confirm']) {
     $cmis_objectId = $form_state['values']['cmis_objectId'];
     try {

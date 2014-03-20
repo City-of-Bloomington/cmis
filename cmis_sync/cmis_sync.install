@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file - install file for CMIS Sync module
  */
@@ -18,14 +17,14 @@ function cmis_sync_schema() {
         'not null' => TRUE,
         'default'  => '',
         'description' => t('repositoryId from the CMIS repository'),
-      ),  
+      ),
       'cmis_objectId' => array(
         'type'     => 'varchar',
         'length'   => 255,
         'not null' => TRUE,
         'default'  => '',
         'description' => t('objectId from the CMIS repository'),
-      ),  
+      ),
       'changed_timestamp' => array(
         'type'     => 'int',
         'unsigned' => TRUE,
@@ -41,8 +40,8 @@ function cmis_sync_schema() {
       'cmis_sync_repo_idx' => array('cmis_repositoryId'),
       'cmis_sync_obj_idx' => array('cmis_objectId')
     ),
-    'primary key' => array('id'),  
+    'primary key' => array('id'),
   );
-  
+
   return $schema;
 }

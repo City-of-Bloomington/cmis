@@ -2,13 +2,13 @@
 
 /**
  * Returns a CMIS repository properties, based on local configuration.
- * 
+ *
  * Config sample:
  *  $conf['cmis_repositories'] = array(
  *    'default' => array (
  *      'label' => 'Local',
  *      'url' => 'http://127.0.0.1:8080/alfresco/cmisatom',
- *      'transport' => 'cmis_headerswing', 
+ *      'transport' => 'cmis_headerswing',
  *      'headerswing_headers' => array (
  *        // headers copied from $_SERVER[] to CMIS repository curl call
  *        'HTTP_HOST' => 'FRONTENT_HOST',
@@ -18,14 +18,14 @@
  *        'PHP_AUTH_DIGEST' => 'FRONTEND_AUTH'
  *      )
  *    ),
- *    
+ *
  *    'demo cmis alfresco' => array(
  *      'label' => 'cmis.alfresco.com',
  *      'user' => 'admin',
  *      'password' => 'admin',
  *      'url' => 'http://cmis.alfresco.com/cmisatom'
  *    ),
- *    
+ *
  *    'demo cmis nuxeo' => array(
  *      'label' => 'cmis.demo.nuxeo.org',
  *      'user' => 'Administrator',
@@ -34,7 +34,7 @@
  *      'repository_id' => '8006e8e1-2298-4764-998c-5800383ac88a'
  *    )
  *  );
- * 
+ *
  * Usage:
  *   // get default CMIS repository info
  *   $cmis_repo = cmis_get_repository();
@@ -54,8 +54,8 @@
  *
  *   // config settings
  *   print_r($cmis_repo->settings)
- * 
- * @param $id_or_alias 
+ *
+ * @param $id_or_alias
  * @return stdClass
  */
 function cmis_get_repository($id_or_alias = NULL) {
@@ -66,7 +66,7 @@ function cmis_get_repository($id_or_alias = NULL) {
     global $user;
     $id_or_alias = isset($user->cmis_repository)?$user->cmis_repository:'default';
   }
-  
+
   // init repository cache
   if (is_null($repositories_cache)) {
     $repositories_cache = array();
@@ -78,22 +78,22 @@ function cmis_get_repository($id_or_alias = NULL) {
   }
   else {
     $config_cmis_repos = variable_get('cmis_repositories', array());
-    
+
     if (array_key_exists($id_or_alias, $config_cmis_repos)) {
       // setup temp repository details
-      $cmis_repository = new stdClass();      
+      $cmis_repository = new stdClass();
       $repositories_cache[$id_or_alias] = $cmis_repository;
-      
+
       // setup settings
       $cmis_repository->settings = $config_cmis_repos[$id_or_alias];
-      
+
       // merge in defaults.
       $cmis_repository->settings += array('transport' => 'cmis_common');
-      
+
       // init cmis repository
       $cmis_repository->info = cmisapi_getRepositoryInfo($id_or_alias);
       $cmis_repository->repositoryId = $cmis_repository->info->repositoryInfo['cmis:repositoryId'];
-        
+
       // save repo description in cache
       $repositories_cache[$cmis_repository->repositoryId] = & $repositories_cache[$id_or_alias];
     }
@@ -102,7 +102,7 @@ function cmis_get_repository($id_or_alias = NULL) {
                                 array('@cmis_id_or_alias' => $id_or_alias)));
     }
   }
-  
+
   return $cmis_repository;
 }
 
@@ -125,12 +125,12 @@ function cmis_invoke($repositry_id, $url = '', $properties = array()) {
     'data' => NULL,
     'retry' => 3
   );
-  
+
   $cmis_repository = cmis_get_repository((string) $repositry_id);
-  
+
   // If the conf array has specified a transport, then we should use that and not look for modules implementing cmis_invoke
   $cmis_transport = $cmis_repository->settings['transport'];
-  
+
   // If the default is in use, check that another module isn't implementing cmis_invoke
   if ($cmis_transport == 'cmis_common'){
     foreach (module_implements('cmis_invoke') as $module) {
@@ -139,12 +139,12 @@ function cmis_invoke($repositry_id, $url = '', $properties = array()) {
 	    $cmis_transport = $module;
 	    break;
       }
-    } 
-  }  
+    }
+  }
 
   // invoke hook_cmis()
   if (module_exists($cmis_transport)) {
-    return module_invoke($cmis_transport, 'cmis_invoke', $url, $properties, $cmis_repository->settings);  
+    return module_invoke($cmis_transport, 'cmis_invoke', $url, $properties, $cmis_repository->settings);
   }
   else {
     throw new CMISException(t('Unable to lookup CMIS transport [@cmis_transport] for [@cmis_id_or_alias]',
@@ -155,7 +155,7 @@ function cmis_invoke($repositry_id, $url = '', $properties = array()) {
 
 /**
  * Utility function that returns all known vendors
- * 
+ *
  * @return array
  */
 function cmis_get_vendors() {
@@ -169,8 +169,8 @@ function cmis_get_vendors() {
 }
 
 /**
- * Utility function used to call a CMIS method, 
- * using the CMIS vendor selected in config.  
+ * Utility function used to call a CMIS method,
+ * using the CMIS vendor selected in config.
  *
  * @return mixed
  */
@@ -199,7 +199,7 @@ function cmis_vendor_invoke() {
 
 /**
  * Return permissions for the CMIS module.
- * 
+ *
  */
 function cmis_permission() {
   $perms = array(
@@ -211,15 +211,15 @@ function cmis_permission() {
 
 /**
  * CMIS Exception class.
- *  
+ *
  */
 class CMISException extends Exception {
-  
+
 }
 
 /**
- * Utility for handling CMIS errors. 
- * 
+ * Utility for handling CMIS errors.
+ *
  * @param $e Exception
  */
 function cmis_error_handler($type, $e) {
@@ -237,7 +237,7 @@ function cmis_block_info() {
     'info' => t('CMIS repository switcher'),
     'cache' => DRUPAL_CACHE_GLOBAL,
   );
-  
+
   return $blocks;
 }
 
@@ -257,7 +257,7 @@ function cmis_block_view($delta = '') {
 
 /**
  * Implementation of hook_boot()
- * 
+ *
  */
 function cmis_boot() {
   if (isset($_SESSION['cmis_repository'])) {
@@ -268,7 +268,7 @@ function cmis_boot() {
 
 /**
  * CMIS repository switcher form.
- * 
+ *
  */
 function cmis_repository_switcher_form($form, &$form_state) {
   $repositories = array();
@@ -281,12 +281,12 @@ function cmis_repository_switcher_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('CMIS repositories'),
     '#default_value' => isset($_SESSION['cmis_repository']) ? $_SESSION['cmis_repository'] : '',
-    '#options' => $repositories 
+    '#options' => $repositories
   );
-  
+
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('OK'), 
+    '#value' => t('OK'),
   );
 
   return $form;
@@ -299,7 +299,7 @@ function cmis_repository_switcher_form($form, &$form_state) {
 function cmis_repository_switcher_form_submit($form, & $form_state) {
   // saving current CMIS repository
   $_SESSION['cmis_repository'] = $form_state['values']['cmis_repository'];
-  
+
   // redirect to the source page
   $form_state['redirect'] = $_GET['q'];
 }

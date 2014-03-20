@@ -3,8 +3,8 @@
 /**
  * @file
  * CMIS 0.5 client implementation
- * 
- * @todo 
+ *
+ * @todo
  *   Document all CMIS calls
  *   Update methods signatures to match CMIS specs
  */
@@ -72,7 +72,7 @@ function cmisapi_getObjectByPath($repositoryId, $path, $options = array()) {
   return cmis_vendor_invoke('getObjectByPath', $repositoryId, $path, $options);
 }
 
-function cmisapi_createDocument($repositoryId, $folderId, $fileName, $properties=array(), $content=null, $contentType = "application/octet-stream", $options = array()) { 
+function cmisapi_createDocument($repositoryId, $folderId, $fileName, $properties=array(), $content=null, $contentType = "application/octet-stream", $options = array()) {
   return cmis_vendor_invoke('createDocument', $repositoryId, $folderId, $fileName, $properties, $content, $contentType, $options);
 }
 
@@ -141,7 +141,7 @@ function cmisapi_removeObjectFromFolder($repositoryId, $objectId, $folderId = NU
 }
 
 /*
- * Discovery servicies 
+ * Discovery servicies
  */
 
 function cmisapi_query($repositoryId, $statement, $options = array()) {

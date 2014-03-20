@@ -1,5 +1,4 @@
 <?php
-
 function theme_cmis_browser($variables) {
   // Render output
   drupal_add_css(drupal_get_path('module', 'cmis_browser') .'/css/cmis_browser.css');
@@ -30,7 +29,7 @@ function theme_cmis_browser_browse_form($variables) {
 /**
  * Custom theme for cmis_browser_browse action
  *
- * @param $children
+ * @param $variables Children
  */
 function theme_cmis_browser_browse_children($variables) {
   $header = array(t('name'), t('type'), t('size'), t('author'), t('last modified'), '');
@@ -42,7 +41,9 @@ function theme_cmis_browser_browse_children($variables) {
     $author = $child->properties['cmis:createdBy'];
     $updated = date_format(date_create($child->properties['cmis:lastModificationDate']), 'n/j/Y g:i A');
     $actions = array();
+
     //print_r($child->properties);
+
     if (!empty($_GET['type']) && $_GET['type'] == 'popup') {
       if ($_GET['caller'] == 'settings') {
         if (!empty($child->properties['cmis:path'])) {
@@ -54,13 +55,13 @@ function theme_cmis_browser_browse_children($variables) {
         }
       }
       else {
-        if (empty($child->properties['cmis:path'])) {
+        #if (empty($child->properties['cmis:path'])) {
           $actions = array(
             l('Choose', '',
               array('attributes' => array('class' => 'cmis-field-insert', 'id' => $child->id, 'name' => $child->properties['cmis:name']))
              ),
           );
-        }
+        #}
       }
     }
     else {
