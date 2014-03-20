@@ -96,10 +96,11 @@ function cmis_common_cmisapi_invoke() {
 
     // CommonCMISService allows other modules to control the way CMISService class
     // calls the CMIS repositories via hook_cmis_invoke()
-
-    $cmis_repository->service = new CommonCMISService($cmis_repository->settings['url'],
-                                                      isset($cmis_repository->settings['user']),
-                                                      isset($cmis_repository->settings['password']));
+    $cmis_repository->service = new CommonCMISService(
+      $cmis_repository->settings['url'],
+      isset($cmis_repository->settings['user'])     ? $cmis_repository->settings['user']     : null,
+      isset($cmis_repository->settings['password']) ? $cmis_repository->settings['password'] : null
+    );
   }
 
   return call_user_func_array(array($cmis_repository->service, $cmis_method), $args);
