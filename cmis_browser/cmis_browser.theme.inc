@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 function theme_cmis_browser($variables) {
   // Render output
@@ -10,26 +10,26 @@ function theme_cmis_browser($variables) {
   }
   $contents .= theme('cmis_browser_browse_breadcrumb', array('bcarray' => $variables['bcarray']));
   $contents .= theme('cmis_browser_browse_children', array('context' => $variables['children']));
-  
-  return $contents; 
+
+  return $contents;
 }
 
 /**
  * Custom theme for cmis_browser form.
- * 
+ *
  * @param $form
  */
 function theme_cmis_browser_browse_form($variables) {
   $form = $variables['form'];
   $header = array('', '');
   $rows = array(array(drupal_render($form['path']), drupal_render($form['submit'])));
-  
+
   return theme('table', array('header' => $header, 'rows' => $rows)) . drupal_render_children($form);
 }
 
 /**
  * Custom theme for cmis_browser_browse action
- * 
+ *
  * @param $children
  */
 function theme_cmis_browser_browse_children($variables) {
@@ -37,7 +37,7 @@ function theme_cmis_browser_browse_children($variables) {
   $rows = array();
   $folder_img = theme('image', array('path' => drupal_get_path('module', 'cmis_browser') .'/images/space.gif'));
   $document_img = theme('image', array('path' => drupal_get_path('module', 'cmis_browser') .'/images/file.png'));
-  
+
   foreach ($variables['context'] as $child) {
     $author = $child->properties['cmis:createdBy'];
     $updated = date_format(date_create($child->properties['cmis:lastModificationDate']), 'n/j/Y g:i A');
@@ -47,7 +47,7 @@ function theme_cmis_browser_browse_children($variables) {
       if ($_GET['caller'] == 'settings') {
         if (!empty($child->properties['cmis:path'])) {
           $actions = array(
-            l('Choose', $child->properties['cmis:path'], 
+            l('Choose', $child->properties['cmis:path'],
               array('attributes' => array('class' => 'cmis-field-insert', 'id' => $child->id, 'name' => $child->properties['cmis:name']))
              ),
           );
@@ -56,7 +56,7 @@ function theme_cmis_browser_browse_children($variables) {
       else {
         if (empty($child->properties['cmis:path'])) {
           $actions = array(
-            l('Choose', '', 
+            l('Choose', '',
               array('attributes' => array('class' => 'cmis-field-insert', 'id' => $child->id, 'name' => $child->properties['cmis:name']))
              ),
           );
@@ -64,12 +64,12 @@ function theme_cmis_browser_browse_children($variables) {
       }
     }
     else {
-      $actions = array( 
+      $actions = array(
         l(t('properties'), 'cmis/properties', array('attributes' => array('class' => 'action properties'), 'query' => array('id' => $child->id))),
         l(t('delete'), 'cmis/delete', array('query' => array('id' => $child->id, 'return_url' => $_GET['q'])))
-      );  
+      );
     }
-    
+
     switch ($child->properties['cmis:baseTypeId']) {
       case 'cmis:folder':
         $icon = $folder_img;
@@ -82,7 +82,7 @@ function theme_cmis_browser_browse_children($variables) {
         $mimetype = 'Space';
         $size = '';
         break;
-      default:      
+      default:
         $icon = $document_img;
         if (!empty($_GET['type']) && $_GET['type'] == 'popup') {
           $link = l($child->properties['cmis:name'], 'cmis/browser', array('query' => array('id' => $child->id, 'type' => 'popup', 'caller' => $_GET['caller'])));
@@ -93,7 +93,7 @@ function theme_cmis_browser_browse_children($variables) {
         $mimetype = $child->properties['cmis:contentStreamMimeType'];
         $size = number_format($child->properties['cmis:contentStreamLength'] / 1000, 2, '.', ',') .' K';
     }
-    
+
     $rows[] = array($icon .' '. $link, $mimetype, $size, $author, $updated, theme('item_list', array('items' => $actions, 'title' => NULL, 'type' => 'ul', 'attributes' => array('class'=>'actions'))));
   }
   /*
@@ -114,19 +114,19 @@ function theme_cmis_browser_browse_children($variables) {
       });
     });', 'inline');
   */
-  return theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('class' => array('cmis_browser_browse_children')))); 
+  return theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('class' => array('cmis_browser_browse_children'))));
 }
 
 /**
  * Theme for cmis_browser breadcrumb
- * 
+ *
  * @param $bcarray
  */
 function theme_cmis_browser_browse_breadcrumb($variables) {
   $next_img = theme('image', array('path' => drupal_get_path('module', 'cmis_browser') .'/images/next.gif'));
   $contents = '';
   $currentpath = '';
-  
+
   $contents .= '<div id="cmis-breadcrumb">';
   if (!empty($_GET['type']) && $_GET['type'] == 'popup') {
     $contents .= l('Root', 'cmis/browser'. $currentpath, array('query' => array('type' => 'popup', 'caller' => $_GET['caller'])));
@@ -134,7 +134,7 @@ function theme_cmis_browser_browse_breadcrumb($variables) {
   else {
     $contents .= l('Root', 'cmis/browser'. $currentpath);
   }
-  
+
   $currentpath = '';
   foreach ($variables['bcarray'] as $space) {
     $contents .= $next_img .' ';
@@ -145,7 +145,7 @@ function theme_cmis_browser_browse_breadcrumb($variables) {
     else {
       $pagelink = l($space, 'cmis/browser'. $currentpath);
     }
-    $contents .= $pagelink;    
+    $contents .= $pagelink;
   }
 
   $contents .= '</div>';
@@ -155,7 +155,7 @@ function theme_cmis_browser_browse_breadcrumb($variables) {
 
 /**
  * Theme for cmis_browser_content_properties action.
- * 
+ *
  * @param $cmis_object
  */
 function theme_cmis_browser_content_properties($variables) {
@@ -168,7 +168,7 @@ function theme_cmis_browser_content_properties($variables) {
   $rows = array();
   foreach ($variables['cmis_object']->properties as $property => $value) {
     $rows[] = array('<b>'. $property.'</b>', $value);
-  }  
+  }
 
   return $output . theme('table', array('title' => NULL, 'rows' => $rows));
 }
@@ -222,7 +222,7 @@ function theme_cmis_browser_folder_picker($variables) {
         }
       }).css("width", $("#'. $variables['textfield_element']['#id'] .'").attr("offsetWidth").toString()+"px")
   });', 'inline');
-  
+
   return '<div id="'. $variables['textfield_element']['#id'] .'-cmis-picker" style="display:block">'
     .theme('textfield', array('element' => $variables['textfield_element']))
     .'<a href="#"> Tree </a>'
