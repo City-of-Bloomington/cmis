@@ -55,13 +55,13 @@ function theme_cmis_browser_browse_children($variables) {
         }
       }
       else {
-        #if (empty($child->properties['cmis:path'])) {
+        if (empty($child->properties['cmis:path'])) {
           $actions = array(
             l('Choose', '',
               array('attributes' => array('class' => 'cmis-field-insert', 'id' => $child->id, 'name' => $child->properties['cmis:name']))
              ),
           );
-        #}
+        }
       }
     }
     else {
