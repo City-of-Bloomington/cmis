@@ -147,9 +147,16 @@ function cmis_field_field_formatter_view($entity_type, $entity, $field, $instanc
   $element = array();
   switch ($display['type']) {
     case 'cmis_field_link':
+      $repo = cmis_get_repository();
+      $rows = [];
       foreach ($items as $delta => $item) {
-        $element[$delta]['#markup'] = l($item['title'], 'cmis/browser', array('query' => array('id'=> $item['path'])));
+        $rows[] = cmisapi_getProperties($repo->repositoryId, $item['path']);
       }
+      $element[$delta] = array(
+        '#type'  => 'html_tag',
+        '#tag'   => 'div',
+        '#value' => theme('cmis_views_detail', array('rows' => $rows, 'repoId' => $repo->repositoryId))
+      );
       break;
   }
   return $element;

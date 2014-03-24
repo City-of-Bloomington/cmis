@@ -3,4 +3,5 @@ description = Drupal Field implementation for attaching CMIS repository content 
 package = CMIS
 dependencies[] = cmis
 dependencies[] = cmis_browser
+dependencies[] = cmis_views
 core = "7.x"
